@@ -26,7 +26,17 @@ class CategoryFactory extends Factory
     {
         return $this->afterCreating(function (Category $category) {
             if ($category->getKey() > 10) {
-                $category->update(['parent_id' => rand(1, $category->getKey() - 1)]);
+                $parentId = rand(1, $category->getKey() - 1);
+                $parentChildren = Category::query()->find($parentId)->children()->count();
+
+                $category->update([
+                    'parent_id' => $parentId,
+                    'index' => $parentChildren
+                ]);
+            } else {
+                $category->update([
+                    'index' => $category->getKey() - 1
+                ]);
             }
         });
     }

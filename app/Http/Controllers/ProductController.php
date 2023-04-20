@@ -17,6 +17,7 @@ class ProductController extends Controller
         $products = Product::query()
             ->when($searchQuery, fn(Builder $builder) => $builder->whereFullText(['title', 'description'], $searchQuery))
             ->orderBy('title', $sortQuery)
+            ->with(['category'])
             ->get();
 
         return ProductResource::collection($products);
